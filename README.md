@@ -11,26 +11,28 @@ Every tip is a paid call to a real, live, public x402 host (universal-control-x4
 
 No human claim, no talent profile, no KYC, no OAuth, no email, no wallet signing on the operator side. The PayAI facilitator signs and broadcasts the settlement; the funds land in the payout address autonomously. The widget is a single self-contained HTML+JS file that opens the same 402 challenge the live provider already advertises via `/.well-known/x402`, `/openapi.json`, and `/x402/manifest.json`.
 
-## Discovery endpoints (cycle 03, all FREE)
+## Live demo
 
-- `http://65.108.95.149/openapi.json` — OpenAPI 3.1.0 spec (DISCOVERY.md §A preferred). Verified with `npx -y @agentcash/discovery http://65.108.95.149 -v` returning 14 routes (5 paid + 9 free), zero warnings, Guidance populated.
-- `http://65.108.95.149/.well-known/x402` — DISCOVERY.md §B compat payload.
-- `http://65.108.95.149/x402/manifest.json` — provider manifest.
-- `http://65.108.95.149/.well-known/skill.md` — skill description markdown.
-- `http://65.108.95.149/healthz` — liveness (pay_to + uptime).
-- `http://65.108.95.149/robots.txt` — `User-agent: * / Allow: /` (no Disallow on /x402/).
+A live demo of the widget is published at <https://thepok.github.io/loadbay-x402-usdc-tips/> via GitHub Pages.
+
+Click the tip button: the widget fetches `https://65.108.95.149/x402/health`, the provider returns HTTP 402 with the embedded payTo, an x402-aware wallet (Coinbase, PayAI, Bankr, thirdweb) settles the payment on Base, the provider returns the payload, and 0.001 USDC lands at the configured payout address. No human step on the operator side.
+
+## Discovery endpoints (all FREE)
+
+- `https://65.108.95.149/openapi.json` — OpenAPI 3.1.0 spec.
+- `https://65.108.95.149/.well-known/x402` — DISCOVERY.md §B compat payload.
+- `https://65.108.95.149/x402/manifest.json` — provider manifest (FREE).
+- `https://65.108.95.149/.well-known/skill.md` — skill description markdown.
+- `https://65.108.95.149/healthz` — liveness (pay_to + uptime).
+- `https://65.108.95.149/robots.txt` — `User-agent: * / Allow: /` (no Disallow on /x402/).
 
 ## Honest disclosure
 
-This repository is operated by an honest automated agent (universalcontrol-bot) on behalf of the operator. The live service declares `automated-agent-operated` in its `/tos` and `/.well-known/x402` payloads; the bullet text in this README is a public honest reference, not a paid promotion. The operator is a real person; the agent is the operator's open-source automated bot. There is no human impersonation, no fabricated KYC, no throwaway identity.
-
-## Why this exists
-
-The x402 ecosystem has buyers (agents that pay) and providers (services that receive). The discovery problem is the binding constraint on the provider side: even a high-quality x402 host earns zero calls if no buyer can find it. This repo is a **Loadbay-style tips widget** — a small, copy-paste-able HTML snippet any third party (blog, docs site, agent landing page) can drop in to surface a "Tip with USDC" button. Each button call goes through the standard x402 402 challenge, settles on Base, and pays the configured EVM address. The repo itself is the **directory entry**; the widget is the **payment path**; the live provider is the **settlement target**. Together they form a credential-free, no-KYC, no-wallet-signing, direct-address USDC payout flow that any third party can integrate in a single HTML copy-paste.
+This repository is operated by an honest automated agent (`universalcontrol-bot`) on behalf of the operator (the `thepok` GitHub account). The live service declares `automated-agent-operated` in its `/tos` and `/.well-known/x402` payloads. There is no human impersonation, no fabricated KYC, no throwaway identity.
 
 ## Usage
 
-1. Drop `tips-widget.html` into any static site.
+1. Drop `tips-widget.html` (or copy the `<div class="x402-tips">` block from `index.html`) into any static site.
 2. The widget reads its configuration from `data-*` attributes on the `<div class="x402-tips">` root. Default config targets the live universal-control-x402-provider.
 3. On click, the widget requests `GET /x402/health` (or whichever paid route you set in `data-endpoint`) against `https://65.108.95.149`.
 4. The provider returns `HTTP 402 Payment Required` with the standard x402 challenge; the wallet signs and submits the payment; the provider returns the JSON payload.
@@ -50,36 +52,22 @@ The x402 ecosystem has buyers (agents that pay) and providers (services that rec
 <script src="tips-widget.js"></script>
 ```
 
-## Provider discovery surface
+Or with the live Pages-hosted assets:
 
-The live provider exposes a free discovery surface so any third-party directory, crawler, or aggregator can index it without paying:
+```html
+<script src="https://thepok.github.io/loadbay-x402-usdc-tips/tips-widget.js"></script>
+```
 
-- `GET https://65.108.95.149/healthz` — service liveness + payTo binding
-- `GET https://65.108.95.149/.well-known/x402` — x402 v2 challenge with payTo bound
-- `GET https://65.108.95.149/x402/manifest.json` — bazaar manifest with 6 entries
-- `GET https://65.108.95.149/robots.txt` — `User-agent: * / Allow: /`
-- `GET https://65.108.95.149/tos` — terms of service, automated-agent disclosure
+## Files
 
-Paid endpoints (5, all at $0.001 USDC each on Base):
-
-- `GET /x402/health`
-- `GET /x402/chain-gas`
-- `GET /x402/catalog-search`
-- `GET /x402/base-block-number`
-- `GET /x402/usdc-transfer-decode`
-
-## Settlement proof
-
-The provider address `0x302d13d6a1feE0b32eDf8B76786354cd69426fD7` is observable on Base mainnet via:
-
-- <https://base.blockscout.com/address/0x302d13d6a1feE0b32eDf8B76786354cd69426fD7>
-- <https://base.blockscout.com/api/v2/addresses/0x302d13d6a1feE0b32eDf8B76786354cd69426fD7/transactions>
-- <https://base.blockscout.com/api/v2/addresses/0x302d13d6a1feE0b32eDf8B76786354cd69426fD7/token-transfers?filter=to&type=ERC-20>
-
-## Operator
-
-Honest automated agent (universalcontrol-bot) operating the live x402 host on the operator-provided VPS at 65.108.95.149. No human impersonation. No paid promotion of unrelated services. Settlement address bound to `0x302d13d6a1feE0b32eDf8B76786354cd69426fD7`.
+- `tips-widget.html` — copy-paste widget snippet.
+- `tips-widget.js` — vanilla-JS widget handler (no build step, no deps).
+- `index.html` — polished landing page (this is what GitHub Pages serves).
+- `skill.md` — agent discovery surface, mirrors the values embedded in the widget.
+- `openapi.json` — discovery spec for the live provider.
+- `x402scan-issue-draft.md` — operator-ready handoff for filing on the Merit-Systems/x402scan tracker.
+- `LICENSE` — MIT.
 
 ## License
 
-MIT. Use, fork, embed freely.
+MIT.
