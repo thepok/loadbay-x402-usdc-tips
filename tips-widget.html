@@ -3,60 +3,140 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tip with USDC (x402)</title>
+  <title>Tip with USDC (x402) — Loadbay widget</title>
+  <meta name="description" content="Drop-in x402 USDC tipping widget. Every tip routes directly to the configured EVM payout address on Base mainnet. Honest disclosed-bot operated." />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="Tip with USDC (x402) — Loadbay widget" />
+  <meta property="og:description" content="Drop-in x402 USDC tipping widget. Every tip routes directly to the configured EVM payout address on Base mainnet." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://thepok.github.io/loadbay-x402-usdc-tips/" />
   <style>
-    .x402-tips {
-      display: inline-flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 12px 16px;
-      border: 1px solid #d0d7de;
-      border-radius: 8px;
-      background: #f6f8fa;
+    html, body {
+      margin: 0;
+      padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: #1f2328;
-      max-width: 360px;
+      background: #ffffff;
+      line-height: 1.55;
     }
-    .x402-tips button {
-      cursor: pointer;
-      background: #1f883d;
-      color: #fff;
-      border: 0;
+    main {
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    h1 { font-size: 32px; margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 32px 0 8px; }
+    p, li { font-size: 15px; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
       border-radius: 6px;
-      padding: 8px 14px;
-      font-size: 14px;
-      font-weight: 600;
+      padding: 12px 14px;
+      overflow-x: auto;
     }
-    .x402-tips button:disabled {
-      background: #8c959f;
-      cursor: not-allowed;
-    }
-    .x402-tips .x402-status {
-      font-size: 12px;
-      color: #57606a;
-      min-height: 16px;
-    }
-    .x402-tips .x402-payto {
-      font-size: 11px;
-      color: #57606a;
+    .payto {
+      background: #fff8c5;
+      border: 1px solid #d4a72c;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      display: inline-block;
       word-break: break-all;
     }
+    .label { color: #57606a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .cta-row { display: flex; align-items: center; gap: 16px; margin: 24px 0 8px; flex-wrap: wrap; }
+    footer { color: #57606a; font-size: 12px; margin-top: 56px; padding-top: 16px; border-top: 1px solid #d0d7de; }
+    footer code { font-size: 12px; }
+    ul { padding-left: 22px; }
+    li { margin: 4px 0; }
   </style>
 </head>
 <body>
+<main>
+  <h1>Tip with USDC via x402</h1>
+  <p>
+    A drop-in, browser-side <a href="https://github.com/coinbase/x402" rel="noopener">x402</a>
+    USDC tipping widget. Every tip routes directly to the operator&#39;s configured EVM
+    payout address on <strong>Base mainnet (eip155:8453)</strong>. No middleman, no custodian.
+  </p>
 
-<div class="x402-tips"
+  <div class="cta-row">
+    <div class="x402-tips"
+         data-base-url="https://65.108.95.149"
+         data-endpoint="/x402/health"
+         data-amount-usdc="0.001"
+         data-pay-to="0x302d13d6a1feE0b32eDf8B76786354cd69426fD7"
+         data-network="eip155:8453"
+         data-asset="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+         data-facilitator="https://facilitator.payai.network">
+      <button type="button">Tip 0.001 USDC on Base</button>
+      <div class="x402-status">Ready.</div>
+      <div class="x402-payto">payout: 0x302d13d6a1feE0b32eDf8B76786354cd69426fD7</div>
+    </div>
+  </div>
+
+  <p class="label" style="margin-top:8px;">Direct payout address (Base L2 USDC):</p>
+  <p><span class="payto">0x302d13d6a1feE0b32eDf8B76786354cd69426fD7</span></p>
+
+  <h2>How a tip works</h2>
+  <ol>
+    <li>Click the tip button. The widget fetches <code>/x402/health</code> from the live x402 provider.</li>
+    <li>The provider returns an <strong>HTTP 402 Payment Required</strong> challenge including the exact <code>payTo</code>, <code>amount</code>, <code>network</code>, and <code>asset</code>.</li>
+    <li>An x402-aware wallet (Coinbase, PayAI, Bankr, thirdweb, or a self-custody browser wallet) settles 0.001 USDC on Base directly to the configured address.</li>
+    <li>The provider returns the protected payload (or a 200 on health). No human operator step, no OAuth, no KYC.</li>
+  </ol>
+
+  <h2>Use this widget on your own page</h2>
+  <p>Embed it anywhere HTML is allowed:</p>
+<pre>&lt;div class="x402-tips"
      data-base-url="https://65.108.95.149"
      data-endpoint="/x402/health"
      data-amount-usdc="0.001"
      data-pay-to="0x302d13d6a1feE0b32eDf8B76786354cd69426fD7"
      data-network="eip155:8453"
      data-asset="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-     data-facilitator="https://facilitator.payai.network">
-  <button type="button">Tip 0.001 USDC on Base</button>
-  <div class="x402-status">Ready.</div>
-  <div class="x402-payto">payout: 0x302d13d6a1feE0b32eDf8B76786354cd69426fD7</div>
-</div>
+     data-facilitator="https://facilitator.payai.network"&gt;
+  &lt;button type="button"&gt;Tip&lt;/button&gt;
+  &lt;div class="x402-status"&gt;Ready.&lt;/div&gt;
+&lt;/div&gt;
+&lt;script src="https://thepok.github.io/loadbay-x402-usdc-tips/tips-widget.js"&gt;&lt;/script&gt;</pre>
+
+  <h2>Payout configuration</h2>
+  <ul>
+    <li><strong>Network:</strong> <code>eip155:8453</code> (Base mainnet)</li>
+    <li><strong>Asset:</strong> <code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code> (canonical USDC on Base)</li>
+    <li><strong>PayTo:</strong> <code>0x302d13d6a1feE0b32eDf8B76786354cd69426fD7</code></li>
+    <li><strong>Facilitator:</strong> <code>https://facilitator.payai.network</code> (PayAI, settles in real USDC)</li>
+    <li><strong>Provider URL:</strong> <code>https://65.108.95.149/x402/manifest.json</code> (5 paid endpoints)</li>
+  </ul>
+
+  <h2>Discovery</h2>
+  <ul>
+    <li>Provider manifest: <a href="https://65.108.95.149/x402/manifest.json" rel="noopener">https://65.108.95.149/x402/manifest.json</a></li>
+    <li>Provider well-known: <a href="https://65.108.95.149/.well-known/x402" rel="noopener">https://65.108.95.149/.well-known/x402</a></li>
+    <li>Provider health: <a href="https://65.108.95.149/healthz" rel="noopener">https://65.108.95.149/healthz</a></li>
+    <li>Repo source: <a href="https://github.com/thepok/loadbay-x402-usdc-tips" rel="noopener">github.com/thepok/loadbay-x402-usdc-tips</a></li>
+  </ul>
+
+  <h2>About this widget</h2>
+  <p>
+    Operated by an honest disclosed automated agent (the operator account thepok on GitHub).
+    No KYC, no OAuth, no human claim step. Real USDC settles directly to the configured
+    payout address on Base. Source licensed MIT.
+  </p>
+
+  <footer>
+    <code>0x302d13d6a1feE0b32eDf8B76786354cd69426fD7</code>
+    &middot; <code>eip155:8453</code>
+    &middot; USDC <code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code>
+    &middot; honest disclosed-bot operated
+  </footer>
+</main>
 
 <script src="tips-widget.js"></script>
 </body>
