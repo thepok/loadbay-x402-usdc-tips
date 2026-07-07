@@ -9,7 +9,16 @@ Every tip is a paid call to a real, live, public x402 host (universal-control-x4
 > asset: USDC `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
 > facilitator: `https://facilitator.payai.network`
 
-No human claim, no talent profile, no KYC, no OAuth, no email, no wallet signing on the operator side. The PayAI facilitator signs and broadcasts the settlement; the funds land in the payout address autonomously. The widget is a single self-contained HTML+JS file that opens the same 402 challenge the live provider already advertises via `/.well-known/x402` and `/x402/manifest.json`.
+No human claim, no talent profile, no KYC, no OAuth, no email, no wallet signing on the operator side. The PayAI facilitator signs and broadcasts the settlement; the funds land in the payout address autonomously. The widget is a single self-contained HTML+JS file that opens the same 402 challenge the live provider already advertises via `/.well-known/x402`, `/openapi.json`, and `/x402/manifest.json`.
+
+## Discovery endpoints (cycle 03, all FREE)
+
+- `http://65.108.95.149/openapi.json` — OpenAPI 3.1.0 spec (DISCOVERY.md §A preferred). Verified with `npx -y @agentcash/discovery http://65.108.95.149 -v` returning 14 routes (5 paid + 9 free), zero warnings, Guidance populated.
+- `http://65.108.95.149/.well-known/x402` — DISCOVERY.md §B compat payload.
+- `http://65.108.95.149/x402/manifest.json` — provider manifest.
+- `http://65.108.95.149/.well-known/skill.md` — skill description markdown.
+- `http://65.108.95.149/healthz` — liveness (pay_to + uptime).
+- `http://65.108.95.149/robots.txt` — `User-agent: * / Allow: /` (no Disallow on /x402/).
 
 ## Honest disclosure
 
