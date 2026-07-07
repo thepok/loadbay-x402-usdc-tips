@@ -1,0 +1,244 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Universal Control x402 Provider",
+    "version": "0.1.0",
+    "description": "Automated-agent-operated paywalled API host on Base mainnet. Each paid call is 0.001 USDC; payment goes directly to operator payTo. Free discovery surfaces: /, /healthz, /tos, /robots.txt, /.well-known/x402, /.well-known/skill.md, /x402/manifest.json, /openapi.json, /favicon.svg, /favicon.ico. Settled by PayAI facilitator.",
+    "contact": {
+      "name": "Universal Control x402",
+      "url": "https://github.com/thepok/loadbay-x402-usdc-tips"
+    },
+    "x-guidance": "Honest disclosed-bot, automated-agent-operated x402 provider on Base mainnet. Five paid endpoints each cost 0.001 USDC ($0.001); payment authorization is signed by the buyer's EVM wallet against payTo=0x302d13d6a1feE0b32eDf8B76786354cd69426fD7 via EIP-3009 transferWithAuthorization, broadcast on Base mainnet, and settled by PayAI facilitator. NO human sign-up, NO KYC, NO OAuth, NO email verification, NO wallet signing by the operator, NO signup or talent profile. The free discovery surfaces (openapi.json, manifest.json, /.well-known/x402, /.well-known/skill.md, /healthz, /tos, /robots.txt) provide everything needed to onboard without operator intervention. All paid endpoints return a 402 Payment-Required response with parseable x402 v2 challenge when called without payment authorization."
+  },
+  "x-discovery": {
+    "ownershipProofs": ["0x302d13d6a1feE0b32eDf8B76786354cd69426fD7"],
+    "version": 1,
+    "x402Version": 2,
+    "payTo": "0x302d13d6a1feE0b32eDf8B76786354cd69426fD7",
+    "network": "eip155:8453",
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "facilitator": "https://facilitator.payai.network",
+    "service": "universal-control-x402-provider",
+    "disclosure": "automated-agent-operated"
+  },
+  "servers": [
+    {
+      "url": "http://65.108.95.149",
+      "description": "Live x402 provider on Base mainnet (payTo = 0x302d13d6a1feE0b32eDf8B76786354cd69426fD7). HTTPS also served on port 443 with self-signed Caddy certificate; HTTP port 80 is the canonical crawler endpoint."
+    }
+  ],
+  "paths": {
+    "/x402/health": {
+      "get": {
+        "summary": "Health probe — returns provider liveness + Base block head",
+        "description": "Returns a JSON object with provider status, started_at, uptime_seconds, and the latest Base block number / finalised state. Pay $0.001 USDC per call (atomic 1000).",
+        "operationId": "getX402Health",
+        "security": [{"x402-payment": []}],
+        "responses": {
+          "200": {
+            "description": "Successful paid health probe",
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          },
+          "402": {
+            "description": "Payment required (x402 v2 challenge with accepts[])",
+            "headers": {
+              "Payment-Required": {
+                "schema": { "type": "string" },
+                "description": "x402 v2 payment-required header"
+              }
+            },
+            "content": { "application/json": { "schema": { "type": "object" } } }
+          }
+        },
+        "x-payment-info": {
+          "protocols": [{"x402": {}}],
+          "price": { "mode": "fixed", "currency": "USD", "amount": "0.001" },
+          "payTo": "0x302d13d6a1feE0b32eDf8B76786354cd69426fD7",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "facilitator": "https://facilitator.payai.network"
+        }
+      }
+    },
+    "/x402/chain-gas": {
+      "get": {
+        "summary": "Base chain gas oracle snapshot",
+        "description": "Returns current Base mainnet gas-price oracle reading. Pay $0.001 USDC per call.",
+        "operationId": "getX402ChainGas",
+        "security": [{"x402-payment": []}],
+        "responses": {
+          "200": { "description": "Gas snapshot", "content": { "application/json": { "schema": { "type": "object" } } } },
+          "402": { "description": "Payment required", "content": { "application/json": { "schema": { "type": "object" } } } }
+        },
+        "x-payment-info": {
+          "protocols": [{"x402": {}}],
+          "price": { "mode": "fixed", "currency": "USD", "amount": "0.001" },
+          "payTo": "0x302d13d6a1feE0b32eDf8B76786354cd69426fD7",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "facilitator": "https://facilitator.payai.network"
+        }
+      }
+    },
+    "/x402/catalog-search": {
+      "get": {
+        "summary": "Search the x402 / CDP discovery catalog",
+        "description": "Returns currently indexed x402 providers matching the supplied query (query= and network= query params). Pay $0.001 USDC per call.",
+        "operationId": "getX402CatalogSearch",
+        "security": [{"x402-payment": []}],
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "search query" },
+          { "name": "network", "in": "query", "schema": { "type": "string" }, "description": "eip155 chain id, e.g. 8453 (Base)" }
+        ],
+        "responses": {
+          "200": { "description": "Search results", "content": { "application/json": { "schema": { "type": "object" } } } },
+          "402": { "description": "Payment required", "content": { "application/json": { "schema": { "type": "object" } } } }
+        },
+        "x-payment-info": {
+          "protocols": [{"x402": {}}],
+          "price": { "mode": "fixed", "currency": "USD", "amount": "0.001" },
+          "payTo": "0x302d13d6a1feE0b32eDf8B76786354cd69426fD7",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "facilitator": "https://facilitator.payai.network"
+        }
+      }
+    },
+    "/x402/base-block-number": {
+      "get": {
+        "summary": "Latest Base mainnet block number",
+        "description": "Returns the current Base mainnet block number. Pay $0.001 USDC per call.",
+        "operationId": "getX402BaseBlockNumber",
+        "security": [{"x402-payment": []}],
+        "responses": {
+          "200": { "description": "Block number", "content": { "application/json": { "schema": { "type": "object" } } } },
+          "402": { "description": "Payment required", "content": { "application/json": { "schema": { "type": "object" } } } }
+        },
+        "x-payment-info": {
+          "protocols": [{"x402": {}}],
+          "price": { "mode": "fixed", "currency": "USD", "amount": "0.001" },
+          "payTo": "0x302d13d6a1feE0b32eDf8B76786354cd69426fD7",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "facilitator": "https://facilitator.payai.network"
+        }
+      }
+    },
+    "/x402/usdc-transfer-decode": {
+      "get": {
+        "summary": "Decode a USDC transfer calldata blob",
+        "description": "Returns a decoded USDC transfer body for the supplied calldata (calldata= hex param). Pay $0.001 USDC per call.",
+        "operationId": "getX402UsdcTransferDecode",
+        "security": [{"x402-payment": []}],
+        "parameters": [
+          { "name": "calldata", "in": "query", "required": true, "schema": { "type": "string" }, "description": "hex calldata blob" }
+        ],
+        "responses": {
+          "200": { "description": "Decoded transfer", "content": { "application/json": { "schema": { "type": "object" } } } },
+          "402": { "description": "Payment required", "content": { "application/json": { "schema": { "type": "object" } } } }
+        },
+        "x-payment-info": {
+          "protocols": [{"x402": {}}],
+          "price": { "mode": "fixed", "currency": "USD", "amount": "0.001" },
+          "payTo": "0x302d13d6a1feE0b32eDf8B76786354cd69426fD7",
+          "network": "eip155:8453",
+          "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "facilitator": "https://facilitator.payai.network"
+        }
+      }
+    },
+    "/x402/manifest.json": {
+      "get": {
+        "summary": "Free x402 manifest of all paid + free endpoints",
+        "description": "Returns the canonical x402 manifest with payTo, network, asset, facilitator, and endpoints. Always free.",
+        "operationId": "getX402Manifest",
+        "security": [],
+        "responses": {
+          "200": { "description": "Manifest", "content": { "application/json": { "schema": { "type": "object" } } } }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "summary": "Free liveness check",
+        "description": "Returns provider liveness, uptime, payTo binding. Always free.",
+        "operationId": "getHealthz",
+        "security": [],
+        "responses": { "200": { "description": "Healthy" } }
+      }
+    },
+    "/.well-known/x402": {
+      "get": {
+        "summary": "DISCOVERY.md-compatible discovery document",
+        "description": "Returns the x402scan / Merit-Systems DISCOVERY.md-compatible payload (version, resources, ownershipProofs, instructions). Always free.",
+        "operationId": "getWellKnownX402",
+        "security": [],
+        "responses": { "200": { "description": "Discovery payload" } }
+      }
+    },
+    "/.well-known/skill.md": {
+      "get": {
+        "summary": "Free skill.md for agent discovery crawlers",
+        "description": "Returns the universal-control-x402 skill description as markdown. Always free.",
+        "operationId": "getWellKnownSkillMd",
+        "security": [],
+        "responses": { "200": { "description": "Skill markdown" } }
+      }
+    },
+    "/tos": {
+      "get": {
+        "summary": "Free terms-of-service disclosure",
+        "description": "Returns the universal-control-x402 TOS as markdown. Always free.",
+        "operationId": "getTos",
+        "security": [],
+        "responses": { "200": { "description": "TOS markdown" } }
+      }
+    },
+    "/robots.txt": {
+      "get": {
+        "summary": "Free robots.txt (no /x402/ disallow)",
+        "description": "Returns 'User-agent: * / Allow: /' so crawlers can read bazaar metadata on the 402 challenge.",
+        "operationId": "getRobots",
+        "security": [],
+        "responses": { "200": { "description": "robots.txt" } }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Free landing page",
+        "description": "Returns a tiny HTML index pointing at the manifest, healthz, and discovery surfaces.",
+        "operationId": "getIndex",
+        "security": [],
+        "responses": { "200": { "description": "HTML index" } }
+      }
+    },
+    "/favicon.svg": {
+      "get": {
+        "summary": "Free SVG favicon",
+        "description": "Inline SVG favicon. Always free.",
+        "operationId": "getFaviconSvg",
+        "security": [],
+        "responses": { "200": { "description": "SVG image", "content": { "image/svg+xml": { "schema": { "type": "string" } } } } }
+      }
+    },
+    "/favicon.ico": {
+      "get": {
+        "summary": "Free legacy favicon (serves SVG body)",
+        "description": "Legacy favicon endpoint used by older crawlers. Always free.",
+        "operationId": "getFaviconIco",
+        "security": [],
+        "responses": { "200": { "description": "SVG image", "content": { "image/svg+xml": { "schema": { "type": "string" } } } } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "x402-payment": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-PAYMENT",
+        "description": "x402 v2 payment authorization token (EIP-3009 transferWithAuthorization). Signed by buyer wallet against payTo=0x302d13d6a1feE0b32eDf8B76786354cd69426fD7, broadcast on Base mainnet, settled by PayAI facilitator."
+      }
+    }
+  }
+}
